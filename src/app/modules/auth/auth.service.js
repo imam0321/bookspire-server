@@ -2,6 +2,7 @@ import AppError from "../../errorHelpers/AppError.js";
 import { User } from "../user/user.model.js";
 import httpStatus from "http-status-codes";
 import bcryptjs from "bcryptjs";
+import { createUserTokens } from "../../utils/userTokens.js";
 
 const credentialLogin = async (payload) => {
   const { email, password } = payload;
@@ -21,16 +22,18 @@ const credentialLogin = async (payload) => {
     throw new AppError(httpStatus.BAD_REQUEST, "Password not match!");
   }
 
+  const userToken = await createUserTokens(isUserExist);
+
   const { password: pass, ...rest } = isUserExist.toObject();
 
   return {
+    accessToken: userToken.accessToken,
+    refreshToken: userToken.refreshToken,
     data: rest,
   };
 };
 
-const logout = async()=> {
-  
-}
+const logout = async () => {};
 
 export const AuthServices = {
   credentialLogin,
