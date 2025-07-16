@@ -45,8 +45,6 @@ const getNewAccessToken = async (refreshToken) => {
   };
 };
 
-const logout = async () => {};
-
 export const AuthServices = {
   credentialLogin,
   getNewAccessToken
