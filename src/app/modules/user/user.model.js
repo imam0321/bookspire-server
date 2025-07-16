@@ -8,9 +8,6 @@ const authProviderSchema = new Schema(
   { versionKey: false, _id: false }
 );
 
-
-
-
 const userSchema = new Schema(
   {
     name: {

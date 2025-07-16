@@ -13,6 +13,44 @@ const createUser = catchAsync(async (req, res, next) => {
   });
 });
 
+const getAllUsers = catchAsync(async (req, res, next) => {
+  const result = await UserServices.getAllUsers();
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "All User Get Successfully",
+    data: result,
+  });
+});
+
+const getAllSellers = catchAsync(async (req, res, next) => {
+  const query = { role: "seller" };
+  const result = await UserServices.getAllSellers(query);
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "All Seller Get Successfully",
+    data: result,
+  });
+});
+
+const updateUser = catchAsync(async (req, res, next) => {
+  const userId = req.params.id;
+  const updateData = req.body;
+
+  const result = await UserServices.updateUser(userId, updateData);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.ACCEPTED,
+    message: "User Updated Successfully",
+    data: result,
+  });
+});
+
 export const UserControllers = {
   createUser,
-}
+  getAllUsers,
+  getAllSellers,
+  updateUser,
+};
