@@ -27,6 +27,7 @@ const userSchema = new Schema(
       type: String,
     },
     isVerified: { type: Boolean, default: false },
+    isActive: { type: String, enum: ["active", "block"], default: "active" },
     password: {
       type: String,
     },
