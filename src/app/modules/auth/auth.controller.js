@@ -1,3 +1,4 @@
+import passport from "passport";
 import { envVars } from "../../config/env.js";
 import AppError from "../../errorHelpers/AppError.js";
 import catchAsync from "../../utils/catchAsync.js";
@@ -8,18 +9,31 @@ import { AuthService } from "./auth.service.js";
 import httpStatus from "http-status-codes";
 
 const credentialLogin = catchAsync(async (req, res, next) => {
-  const { email, password } = req.body;
+  passport.authenticate("local", async (error, user, info) => {
+    if (error) {
+      return next(new AppError(httpStatus.BAD_REQUEST, error));
+    }
+    if (!user) {
+      return next(new AppError(httpStatus.BAD_REQUEST, info.message));
+    }
 
-  const userInfo = await AuthService.credentialLogin({ email, password });
+    const userTokens = await createUserTokens(user);
 
-  setAuthCookie(res, userInfo);
+    const { password, ...rest } = user.toObject();
 
-  sendResponse(res, {
-    success: true,
-    statusCode: httpStatus.ACCEPTED,
-    message: "User Login Successfully",
-    data: userInfo,
-  });
+    setAuthCookie(res, userTokens);
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "User Login Successfully",
+      data: {
+        accessToken: userTokens.accessToken,
+        refreshToken: userTokens.refreshToken,
+        user: rest,
+      },
+    });
+  })(req, res, next);
 });
 
 const getNewAccessToken = catchAsync(async (req, res, next) => {
@@ -38,6 +52,27 @@ const getNewAccessToken = catchAsync(async (req, res, next) => {
     success: true,
     message: "New Access Token Retried Successfully",
     data: tokenInfo,
+  });
+});
+
+const resetPassword = catchAsync(async (req, res, next) => {
+  const decodedToken = req.user;
+  const { oldPassword, newPassword } = req.body;
+
+  if (!oldPassword || !newPassword) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "Old and new password are required"
+    );
+  }
+
+  await AuthService.resetPassword(decodedToken, oldPassword, newPassword);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Password Changed Successfully",
+    data: null,
   });
 });
 
@@ -84,6 +119,7 @@ const googleCallbackController = catchAsync(async (req, res, next) => {
 export const AuthController = {
   credentialLogin,
   getNewAccessToken,
+  resetPassword,
   logout,
   googleCallbackController,
 };
