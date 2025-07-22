@@ -1,11 +1,24 @@
 import { Router } from "express";
-import { AuthControllers } from "./auth.controller.js";
-
+import { AuthController } from "./auth.controller.js";
+import passport from "passport";
 
 const router = Router();
 
-router.post("/login", AuthControllers.credentialLogin);
-router.post("/refresh-token", AuthControllers.getNewAccessToken);
-router.post("/logout", AuthControllers.logout);
+router.post("/login", AuthController.credentialLogin);
+router.post("/refresh-token", AuthController.getNewAccessToken);
+router.post("/logout", AuthController.logout);
+router.get("/google", async (req, res, next) => {
+  const redirect = req.query.redirect || "/";
+  passport.authenticate("google", {
+    scope: ["profile", "email"],
+    state: redirect,
+  })(req, res, next);
+});
+
+router.get(
+  "/google/callback",
+  passport.authenticate("google", { failureRedirect: "/login" }),
+  AuthController.googleCallbackController
+);
 
 export const AuthRoutes = router;

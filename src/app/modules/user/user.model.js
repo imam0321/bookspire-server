@@ -2,7 +2,10 @@ import { model, Schema } from "mongoose";
 
 const authProviderSchema = new Schema(
   {
-    provider: { type: String, required: true },
+    provider: {
+      type: String,
+      enum: ["Credential", "Google"]
+    },
     providerId: { type: String, required: true },
   },
   { versionKey: false, _id: false }
@@ -31,7 +34,7 @@ const userSchema = new Schema(
     password: {
       type: String,
     },
-    auths: [authProviderSchema]
+    auths: [authProviderSchema],
   },
   { timestamps: true, versionKey: false }
 );
