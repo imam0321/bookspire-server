@@ -76,6 +76,22 @@ const resetPassword = catchAsync(async (req, res, next) => {
   });
 });
 
+const setPassword = catchAsync(
+  async (req, res, next) => {
+    const decodedToken = req.user;
+    const { password } = req.body;
+
+    await AuthService.setPassword(decodedToken.userId, password);
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Password set Successfully",
+      data: null,
+    });
+  }
+);
+
 const logout = catchAsync(async (req, res, next) => {
   res.clearCookie("accessToken", {
     httpOnly: true,
@@ -120,6 +136,7 @@ export const AuthController = {
   credentialLogin,
   getNewAccessToken,
   resetPassword,
+  setPassword,
   logout,
   googleCallbackController,
 };
