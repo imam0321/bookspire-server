@@ -12,11 +12,6 @@ router.post(
   checkAuth("admin", "user", "seller"),
   AuthController.resetPassword
 );
-router.post(
-  "/set-password",
-  checkAuth(...Object.values(Role)),
-  AuthController.setPassword
-);
 router.post("/logout", AuthController.logout);
 router.get("/google", async (req, res, next) => {
   const redirect = req.query.redirect || "/";

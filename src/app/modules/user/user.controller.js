@@ -1,10 +1,10 @@
 import catchAsync from "../../utils/catchAsync.js";
 import { sendResponse } from "../../utils/sendResponse.js";
-import { UserServices } from "./user.service.js";
+import { UserService } from "./user.service.js";
 import httpStatus from "http-status-codes";
 
 const createUser = catchAsync(async (req, res, next) => {
-  const result = await UserServices.createUser(req.body);
+  const result = await UserService.createUser(req.body);
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.CREATED,
@@ -14,7 +14,7 @@ const createUser = catchAsync(async (req, res, next) => {
 });
 
 const getAllUsers = catchAsync(async (req, res, next) => {
-  const result = await UserServices.getAllUsers();
+  const result = await UserService.getAllUsers();
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
@@ -25,7 +25,7 @@ const getAllUsers = catchAsync(async (req, res, next) => {
 
 const getAllSellers = catchAsync(async (req, res, next) => {
   const query = { role: "seller" };
-  const result = await UserServices.getAllSellers(query);
+  const result = await UserService.getAllSellers(query);
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
@@ -38,7 +38,7 @@ const updateUser = catchAsync(async (req, res, next) => {
   const userId = req.params.id;
   const updateData = req.body;
 
-  const result = await UserServices.updateUser(userId, updateData);
+  const result = await UserService.updateUser(userId, updateData);
 
   sendResponse(res, {
     success: true,
@@ -48,9 +48,24 @@ const updateUser = catchAsync(async (req, res, next) => {
   });
 });
 
-export const UserControllers = {
+const getMe = catchAsync(
+  async (req, res, next) => {
+    const decodedToken = req.user;
+    const result = await UserService.getMe(decodedToken.userId);
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Your Profile Retrieved Successfully",
+      data: result.data,
+    });
+  }
+);
+
+export const UserController = {
   createUser,
   getAllUsers,
   getAllSellers,
   updateUser,
+  getMe
 };

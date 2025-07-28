@@ -28,7 +28,7 @@ const createUser = async (payload) => {
 };
 
 const getAllUsers = async () => {
-  const users = await User.find({});
+  const users = await User.find({role: "user"}).select("-password");
   const totalUsers = await User.countDocuments();
   return {
     data: users,
@@ -39,7 +39,7 @@ const getAllUsers = async () => {
 };
 
 const getAllSellers = async () => {
-  const sellers = await User.find({ role: "seller" });
+  const sellers = await User.find({ role: "seller" }).select("-password");
   const totalSellers = await User.countDocuments({ role: "seller" });
 
   return {
@@ -65,9 +65,17 @@ const updateUser = async (userId, payload) => {
   return updateUser;
 };
 
-export const UserServices = {
+const getMe = async (userId) => {
+  const myInfo = await User.findById(userId).select("-password");
+  return {
+    data: myInfo,
+  };
+};
+
+export const UserService = {
   createUser,
   getAllUsers,
   getAllSellers,
   updateUser,
+  getMe
 };

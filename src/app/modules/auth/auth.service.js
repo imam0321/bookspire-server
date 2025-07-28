@@ -39,44 +39,8 @@ const resetPassword = async (decodedToken, oldPassword, newPassword) => {
   return { message: "Password reset successfully" };
 };
 
-const setPassword = async (userId, plainPassword) => {
-  const user = await User.findById(userId);
-
-  if (!user) {
-    throw new AppError(httpStatus.NOT_FOUND, "User not Found");
-  }
-
-  const isGoogleProvider = user?.auths.some(
-    (providerObject) => providerObject.provider === "Google"
-  );
-
-  if (user?.password && isGoogleProvider) {
-    throw new AppError(
-      httpStatus.BAD_REQUEST,
-      "You have already set your password"
-    );
-  }
-
-  const hashPassword = await bcryptjs.hash(
-    plainPassword,
-    Number(envVars.BCRYPT_SALT_ROUND)
-  );
-
-  const credentialProvider = {
-    provider: "Credential",
-    providerId: user?.email,
-  };
-
-  const auths = [...user.auths, credentialProvider];
-
-  user.password = hashPassword;
-  user.auths = auths;
-
-  await user.save();
-};
 
 export const AuthService = {
   getNewAccessToken,
   resetPassword,
-  setPassword
 };
