@@ -14,6 +14,18 @@ const create = catchAsync(async (req, res, next) => {
   });
 });
 
+const update = catchAsync(async (req, res, next) => {
+  const result = await ProductService.update(req.params.id, req.body);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Product updated Successfully",
+    data: result,
+  });
+});
+
 export const ProductController = {
   create,
+  update,
 };
