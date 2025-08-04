@@ -13,7 +13,7 @@ const getNewAccessToken = async (refreshToken) => {
   };
 };
 
-const resetPassword = async (decodedToken, oldPassword, newPassword) => {
+const changePassword = async (decodedToken, oldPassword, newPassword) => {
   const user = await User.findById(decodedToken.userId);
 
   if (!user) {
@@ -42,5 +42,5 @@ const resetPassword = async (decodedToken, oldPassword, newPassword) => {
 
 export const AuthService = {
   getNewAccessToken,
-  resetPassword,
+  changePassword,
 };

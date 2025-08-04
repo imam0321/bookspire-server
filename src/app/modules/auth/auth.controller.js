@@ -55,7 +55,7 @@ const getNewAccessToken = catchAsync(async (req, res, next) => {
   });
 });
 
-const resetPassword = catchAsync(async (req, res, next) => {
+const changePassword = catchAsync(async (req, res, next) => {
   const decodedToken = req.user;
   const { oldPassword, newPassword } = req.body;
 
@@ -66,7 +66,7 @@ const resetPassword = catchAsync(async (req, res, next) => {
     );
   }
 
-  await AuthService.resetPassword(decodedToken, oldPassword, newPassword);
+  await AuthService.changePassword(decodedToken, oldPassword, newPassword);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -119,7 +119,7 @@ const googleCallbackController = catchAsync(async (req, res, next) => {
 export const AuthController = {
   credentialLogin,
   getNewAccessToken,
-  resetPassword,
+  resetPassword: changePassword,
   logout,
   googleCallbackController,
 };

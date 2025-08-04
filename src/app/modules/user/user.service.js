@@ -57,10 +57,17 @@ const updateUser = async (userId, payload) => {
     throw new AppError(httpStatus.BAD_REQUEST, "User not Exist");
   }
 
+  if (payload.email) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Email not updatable")
+  }
+  if (payload.password) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Password not updatable")
+  }
+
   const updateUser = await User.findByIdAndUpdate(userId, payload,{
     new: true,
     runValidators: true,
-  });
+  }).select("-password");
 
   return updateUser;
 };
