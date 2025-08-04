@@ -10,6 +10,12 @@ router.post("/refresh-token", AuthController.getNewAccessToken);
 router.post(
   "/change-password",
   checkAuth("admin", "user", "seller"),
+  AuthController.changePassword
+);
+router.post("/forget-password", AuthController.forgetPassword);
+router.post(
+  "/reset-password",
+  checkAuth("admin", "user", "seller"),
   AuthController.resetPassword
 );
 router.post("/logout", AuthController.logout);
@@ -20,7 +26,6 @@ router.get("/google", async (req, res, next) => {
     state: redirect,
   })(req, res, next);
 });
-
 router.get(
   "/google/callback",
   passport.authenticate("google", { failureRedirect: "/login" }),

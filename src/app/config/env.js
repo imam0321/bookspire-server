@@ -18,6 +18,15 @@ const loadEnvVariables = () => {
     "FRONTEND_URL",
     "ADMIN_EMAIL",
     "ADMIN_PASSWORD",
+    "SMTP_HOST",
+    "SMTP_POST",
+    "SMTP_USER",
+    "SMTP_PASS",
+    "SMTP_FROM",
+    "REDIS_HOST",
+    "REDIS_PORT",
+    "REDIS_USERNAME",
+    "REDIS_PASSWORD",
   ];
 
   requiredEnvVariable.forEach((key) => {
@@ -41,6 +50,19 @@ const loadEnvVariables = () => {
     FRONTEND_URL: process.env.FRONTEND_URL,
     ADMIN_EMAIL: process.env.ADMIN_EMAIL,
     ADMIN_PASSWORD: process.env.ADMIN_PASSWORD,
+    EMAIL_SENDER: {
+      SMTP_HOST: process.env.SMTP_HOST,
+      SMTP_POST: process.env.SMTP_POST,
+      SMTP_USER: process.env.SMTP_USER,
+      SMTP_PASS: process.env.SMTP_PASS,
+      SMTP_FROM: process.env.SMTP_FROM,
+    },
+    REDIS: {
+      REDIS_HOST: process.env.REDIS_HOST,
+      REDIS_PORT: process.env.REDIS_PORT,
+      REDIS_USERNAME: process.env.REDIS_USERNAME,
+      REDIS_PASSWORD: process.env.REDIS_PASSWORD,
+    },
   };
 };
 

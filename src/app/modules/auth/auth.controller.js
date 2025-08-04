@@ -76,6 +76,30 @@ const changePassword = catchAsync(async (req, res, next) => {
   });
 });
 
+const forgetPassword = catchAsync(async (req, res, next) => {
+  await AuthService.forgetPassword(req.body.email);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Reset password url send in email Successfully",
+    data: null,
+  });
+});
+
+const resetPassword = catchAsync(async (req, res, next) => {
+  const decodedToken = req.user;
+  const { id, newPassword } = req.body;
+  await AuthService.resetPassword(decodedToken, id, newPassword);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Password reset Successfully",
+    data: null,
+  });
+});
+
 const logout = catchAsync(async (req, res, next) => {
   res.clearCookie("accessToken", {
     httpOnly: true,
@@ -119,7 +143,9 @@ const googleCallbackController = catchAsync(async (req, res, next) => {
 export const AuthController = {
   credentialLogin,
   getNewAccessToken,
-  resetPassword: changePassword,
+  changePassword,
+  forgetPassword,
+  resetPassword,
   logout,
   googleCallbackController,
 };
