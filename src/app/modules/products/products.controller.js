@@ -14,6 +14,19 @@ const create = catchAsync(async (req, res, next) => {
   });
 });
 
+const getAllProducts = catchAsync(async (req, res, next) => {
+  const result = await ProductService.getAllProducts(req.query);
+
+  sendResponse(res, {
+    statusCode: httpStatus.CREATED,
+    success: true,
+    message: "All Product retrieved Successfully",
+    data: result,
+  });
+});
+
+
+
 const update = catchAsync(async (req, res, next) => {
   const result = await ProductService.update(req.params.id, req.body);
 
@@ -27,5 +40,6 @@ const update = catchAsync(async (req, res, next) => {
 
 export const ProductController = {
   create,
+  getAllProducts,
   update,
 };
