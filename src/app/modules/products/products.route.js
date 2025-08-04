@@ -5,18 +5,22 @@ import { ProductController } from "./products.controller.js";
 const router = Router();
 
 router.post("/create", checkAuth("seller"), ProductController.create);
-router.get("/", checkAuth("admin"), ProductController.getAllProducts); // todo
-// router.get(
-//   "/my-products",
-//   checkAuth("seller"),
-//   ProductController.getMyProducts
-// ); // todo
-// router.get("/:id", checkAuth("admin"), ProductController.getSingleProducts); // todo
+router.get("/", checkAuth("admin"), ProductController.getAllProducts);
+router.get(
+  "/my-products",
+  checkAuth("seller"),
+  ProductController.getMyProducts
+);
+router.get(
+  "/:id",
+  checkAuth("admin", "user", "seller"),
+  ProductController.getSingleProduct
+);
 router.patch("/update/:id", checkAuth("seller"), ProductController.update);
-// router.post(
-//   "/delete/:id",
-//   checkAuth("seller", "admin"),
-//   ProductController.deleteProduct
-// ); // todo
+router.delete(
+  "/:id",
+  checkAuth("seller", "admin"),
+  ProductController.deleteProduct
+);
 
 export const ProductRoutes = router;
