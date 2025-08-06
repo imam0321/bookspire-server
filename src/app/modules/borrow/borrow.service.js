@@ -110,6 +110,35 @@ const borrow = async (userId, productId, quantity) => {
   }
 };
 
+const getAllBorrows = async () => {
+  const allBorrow = await Borrow.find({});
+  const totalBorrow = await Borrow.countDocuments();
+
+  const complete = allBorrow.filter((pending) => pending.status === "complete");
+  const pending = allBorrow.filter((pending) => pending.status === "pending");
+  const cancel = allBorrow.filter((pending) => pending.status === "cancel");
+  const fail = allBorrow.filter((pending) => pending.status === "failed");
+
+  return {
+    complete,
+    pending,
+    cancel,
+    fail,
+    totalBorrow,
+  };
+};
+
+const getMyBorrows = async (userId) => {
+  return await Borrow.find({ user: userId });
+};
+
+const getSingleBorrow = async (borrowId) => {
+  return await Borrow.findById(borrowId);
+};
+
 export const BorrowService = {
   borrow,
+  getAllBorrows,
+  getMyBorrows,
+  getSingleBorrow,
 };

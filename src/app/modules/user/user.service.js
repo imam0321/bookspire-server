@@ -4,7 +4,11 @@ import bcryptjs from "bcryptjs";
 import httpStatus from "http-status-codes";
 
 const createUser = async (payload) => {
-  const { email, password, ...rest } = payload;
+  const { email, password, role, ...rest } = payload;
+  if (role !== "user" || role !== "seller") {
+    throw new AppError(httpStatus.BAD_REQUEST, "Role must be user or seller");
+  }
+
   const isUserExist = await User.findOne({ email });
 
   if (isUserExist) {
@@ -21,6 +25,7 @@ const createUser = async (payload) => {
   const user = await User.create({
     email,
     password: hashedPassword,
+    role,
     auths: [authProvider],
     ...rest,
   });
@@ -28,7 +33,7 @@ const createUser = async (payload) => {
 };
 
 const getAllUsers = async () => {
-  const users = await User.find({role: "user"}).select("-password");
+  const users = await User.find({ role: "user" }).select("-password");
   const totalUsers = await User.countDocuments();
   return {
     data: users,
@@ -58,13 +63,13 @@ const updateUser = async (userId, payload) => {
   }
 
   if (payload.email) {
-    throw new AppError(httpStatus.BAD_REQUEST, "Email not updatable")
+    throw new AppError(httpStatus.BAD_REQUEST, "Email not updatable");
   }
   if (payload.password) {
-    throw new AppError(httpStatus.BAD_REQUEST, "Password not updatable")
+    throw new AppError(httpStatus.BAD_REQUEST, "Password not updatable");
   }
 
-  const updateUser = await User.findByIdAndUpdate(userId, payload,{
+  const updateUser = await User.findByIdAndUpdate(userId, payload, {
     new: true,
     runValidators: true,
   }).select("-password");
@@ -84,5 +89,5 @@ export const UserService = {
   getAllUsers,
   getAllSellers,
   updateUser,
-  getMe
+  getMe,
 };

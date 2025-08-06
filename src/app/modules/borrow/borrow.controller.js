@@ -20,6 +20,43 @@ const borrow = catchAsync(async (req, res, next) => {
   });
 });
 
+const getAllBorrows = catchAsync(async (req, res, next) => {
+  const result = await BorrowService.getAllBorrow();
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "All product borrow list get Successfully",
+    data: result,
+  });
+});
+
+const getMyBorrows = catchAsync(async (req, res, next) => {
+  const decodedToken = req.user;
+  const result = await BorrowService.getMyBorrows(decodedToken.userId);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "My product borrow list get Successfully",
+    data: result,
+  });
+});
+
+const getSingleBorrow = catchAsync(async (req, res, next) => {
+  const result = await BorrowService.getSingleBorrow(req.params.borrowId);
+  
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Get single borrow Successfully",
+    data: result,
+  });
+});
+
 export const BorrowController = {
   borrow,
+  getAllBorrows,
+  getMyBorrows,
+  getSingleBorrow
 };
