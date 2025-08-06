@@ -22,7 +22,7 @@ const borrowSchema = new Schema(
     },
     status: {
       type: String,
-      enum: ["pending", "complete", "cancel"],
+      enum: ["pending", "complete", "cancel", "failed"],
       default: "pending",
     },
   },

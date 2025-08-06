@@ -4,6 +4,9 @@ import { PaymentController } from "./payment.controller.js";
 
 const router = Router();
 
+router.post("/init-payment/:borrowId", PaymentController.initPayment);
 router.post("/success", PaymentController.successPayment);
+router.post("/fail", PaymentController.failPayment);
+router.post("/cancel", PaymentController.cancelPayment);
 
 export const PaymentRoutes = router;

@@ -90,12 +90,11 @@ const borrow = async (userId, productId, quantity) => {
       phoneNumber: userPhone,
       address: userAddress,
       amount: totalPrice,
+      quantity,
       transactionId: transactionId,
     };
 
     const sslPayment = await SSLService.sslPaymentInit(sslPayload);
-
-    await Product.updateStatus(productId, quantity);
 
     await session.commitTransaction();
     session.endSession();
