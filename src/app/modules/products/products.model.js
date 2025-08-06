@@ -47,6 +47,11 @@ const productSchema = new Schema(
     location: {
       type: String,
     },
+    copies: {
+      type: Number,
+      required: [true, "Copies are Required"],
+      min: [0, "Copies must be a positive number"],
+    },
     status: {
       type: String,
       enum: {
@@ -66,5 +71,26 @@ const productSchema = new Schema(
   }
 );
 
+productSchema.statics.updateStatus = async function (productId, quantity) {
+  const product = await this.findById(productId);
+  if (!product) return;
+  product.copies -= quantity;
+
+  if (product.copies === 0) {
+    product.status = "sold";
+  } else {
+    product.status = "unsold";
+  }
+  await product.save();
+};
+
+productSchema.pre("save", function (next) {
+  if (this.copies === 0) {
+    this.status = "sold";
+  } else {
+    this.status = "unsold";
+  }
+  next();
+});
 
 export const Product = model("Product", productSchema);
