@@ -5,6 +5,7 @@ import { Borrow } from "./borrow.model.js";
 import { User } from "../user/user.model.js";
 import { getTransactionId } from "../../utils/getTransactionId.js";
 import { Payment } from "../payment/payment.model.js";
+import { SSLService } from "../sslCommerz/sslCommerz.service.js";
 
 const borrow = async (userId, productId, quantity) => {
   const transactionId = getTransactionId();
@@ -74,16 +75,35 @@ const borrow = async (userId, productId, quantity) => {
       },
       { new: true, runValidators: true, session }
     )
-      .populate("user", "name phone address")
+      .populate("user", "name email phone address")
       .populate("product", "productName resalePrice")
       .populate("payment");
+
+    const userName = updateBorrow?.name;
+    const userEmail = updateBorrow?.email;
+    const userPhone = updateBorrow?.phone;
+    const userAddress = updateBorrow?.address;
+
+    const sslPayload = {
+      name: userName,
+      email: userEmail,
+      phoneNumber: userPhone,
+      address: userAddress,
+      amount: totalPrice,
+      transactionId: transactionId,
+    };
+
+    const sslPayment = await SSLService.sslPaymentInit(sslPayload);
 
     await Product.updateStatus(productId, quantity);
 
     await session.commitTransaction();
     session.endSession();
 
-    return { updateBorrow };
+    return {
+      paymentUrl: sslPayment.GatewayPageURL,
+      borrow: updateBorrow,
+    };
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
